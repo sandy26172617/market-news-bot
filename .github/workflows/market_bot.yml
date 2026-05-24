@@ -1,0 +1,42 @@
+name: Market News Bot
+
+on:
+  schedule:
+    # Runs every 10 minutes during Indian market hours (IST = UTC+5:30)
+    # Pre-market:  8:00 AM - 9:15 AM IST  = 2:30 AM - 3:45 AM UTC
+    # Market:      9:15 AM - 3:30 PM IST  = 3:45 AM - 10:00 AM UTC
+    # Post-market: 3:30 PM - 6:00 PM IST  = 10:00 AM - 12:30 PM UTC
+    # Global:      6:00 PM - 8:00 AM IST  = 12:30 PM - 2:30 AM UTC (hourly)
+
+    # Every 10 minutes from 2:30 AM to 12:30 PM UTC (market hours IST)
+    - cron: '*/10 2-12 * * 1-5'
+
+    # Every hour during off-hours UTC (nights + weekends get one run/hour)
+    - cron: '0 13-23 * * *'
+    - cron: '0 0-2 * * *'
+
+  # Allows you to run manually from GitHub website anytime
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install feedparser requests pytz
+
+      - name: Run market bot
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python market_bot.py
