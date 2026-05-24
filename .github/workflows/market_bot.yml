@@ -2,20 +2,17 @@ name: Market News Bot
 
 on:
   schedule:
-    # Runs every 10 minutes during Indian market hours (IST = UTC+5:30)
-    # Pre-market:  8:00 AM - 9:15 AM IST  = 2:30 AM - 3:45 AM UTC
-    # Market:      9:15 AM - 3:30 PM IST  = 3:45 AM - 10:00 AM UTC
-    # Post-market: 3:30 PM - 6:00 PM IST  = 10:00 AM - 12:30 PM UTC
-    # Global:      6:00 PM - 8:00 AM IST  = 12:30 PM - 2:30 AM UTC (hourly)
+    # IST = UTC + 5:30
+    # 7:00 AM IST = 1:30 AM UTC
+    # 5:00 PM IST = 11:30 AM UTC
 
-    # Every 10 minutes from 2:30 AM to 12:30 PM UTC (market hours IST)
-    - cron: '*/10 2-12 * * 1-5'
+    # Every 15 minutes from 7:00 AM to 5:00 PM IST (1:30 AM to 11:30 AM UTC)
+    - cron: '*/15 1-11 * * *'
 
-    # Every hour during off-hours UTC (nights + weekends get one run/hour)
-    - cron: '0 13-23 * * *'
-    - cron: '0 0-2 * * *'
+    # Every hour from 5:00 PM to 7:00 AM IST (11:30 AM to 1:30 AM UTC)
+    - cron: '0 12-23 * * *'
+    - cron: '0 0 * * *'
 
-  # Allows you to run manually from GitHub website anytime
   workflow_dispatch:
 
 jobs:
